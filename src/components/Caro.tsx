@@ -1,18 +1,23 @@
-import React, { useState } from 'react'
-
+import React, { useEffect, useState } from 'react'
+import { useGameStore } from '../store/game'
 
 
 const HR = 16
 const VR = 16
 
 
-const playHR = 15
-const playVR = 15
+
+const GameId = '11223'
 
 
 
 export default function Caro() {
     const [playerState, setPlayerState] = useState<string>('p1')
+    const [gridInteract, setGridInteract] = useState<string[][]>([])
+    const [isJoin, setIsJoin] = useState<boolean>(false)
+    const socketRef = React.useRef<WebSocket | null>(null)
+
+    const { playerName, playerId } = useGameStore()
 
 
     const onHoverHandler = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -22,6 +27,7 @@ export default function Caro() {
         appendChild.style.aspectRatio = '1/1'
         appendChild.setAttribute("x-temp", 'true')
         appendChild.style.position = 'fixed'
+        appendChild.style.zIndex = '999'
         appendChild.style.backgroundColor = playerState === 'p1' ? '#EE6677' : '#37BC9C'
         appendChild.style.pointerEvents = 'none'
         appendChild.style.borderRadius = '50%'
@@ -42,18 +48,71 @@ export default function Caro() {
 
     const onClickHandler = (e: React.MouseEvent<HTMLDivElement>) => {
         const target = e.target as HTMLDivElement
+        //check decide player can move or not
+        for (let i = 0; i < target.children.length; i++) {
+            if (target.children[i].hasAttribute('x-official')) {
+                return
+            }
+        }
+        if (target.hasAttribute('x-official')) return
+        // after check
+        socketRef.current!.send(JSON.stringify({
+            gameID: GameId,
+            type: 'move',
+            Data: {
+                player: playerState,
+                coordinate: target.id
+            }
+        }))
         const appendChild = document.createElement('div')
         appendChild.style.width = '44px'
         appendChild.style.aspectRatio = '1/1'
         appendChild.style.backgroundColor = playerState === 'p1' ? '#EE6677' : '#37BC9C'
         appendChild.style.borderRadius = '50%'
-        console.log(target.attributes)
+        appendChild.setAttribute("x-official", 'true')
         target.appendChild(appendChild)
-
         setPlayerState(playerState === 'p1' ? 'p2' : 'p1')
     }
 
 
+
+    useEffect(() => {
+
+        socketRef.current = new WebSocket(`ws://localhost:4296/game?gameID=${GameId}`)
+
+
+        socketRef.current.onmessage = (e) => {
+            const data = JSON.parse(e.data)
+            if (!isJoin && data.Status === 'Waiting for Player') {
+                socketRef.current!.send(JSON.stringify({
+                    gameID: GameId,
+                    type: 'join',
+                    Data: {
+                        name: playerName,
+                        playerID: playerId,
+                    }
+                }))
+
+                setIsJoin(true)
+            }
+            console.log('get message', data)
+            if (data.Status === 'Game Start' && gridInteract.length === 0) {
+                setGridInteract(data.Grid)
+            }
+
+        }
+
+        // return () => {
+        //     socketRef.current!.close()
+        // }
+    },[isJoin])
+
+
+    if (gridInteract.length === 0) {
+        return (
+            <>game init</>
+        )
+    }
 
     return (
 
@@ -72,11 +131,11 @@ export default function Caro() {
                 }
                 <div className="w-auto h-auto justify-start items-end absolute left-[25px] top-[25px]" id='interact-grid'>
                     {
-                        Array.from({ length: playHR }, (_, i) => (
+                        gridInteract.map((row: string[], i) => (
                             <div className="flex justify-start items-center" key={i}>
                                 {
-                                    Array.from({ length: playVR }, (_, j) => (
-                                        <div className="w-[50px] aspect-square flex justify-center items-center cursor-pointer" key={j} id={"interact-grid" + i + j}
+                                    row.map((box,) => (
+                                        <div className="w-[50px] aspect-square flex justify-center items-center cursor-pointer" key={box} id={box}
                                             onMouseEnter={onHoverHandler}
                                             onMouseLeave={onMouseOutHandler}
                                             onClick={onClickHandler}
