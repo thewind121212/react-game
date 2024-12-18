@@ -1,24 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { useGameStore } from '../store/game'
+import React from 'react'
+import { useCaroGame } from '../hooks/useCaroGame'
+import { HashLoader } from 'react-spinners'
+
 
 
 const HR = 16
 const VR = 16
 
 
-
-const GameId = '11223'
-
-
-
 export default function Caro() {
-    const [playerState, setPlayerState] = useState<string>('p1')
-    const [gridInteract, setGridInteract] = useState<string[][]>([])
-    const [isJoin, setIsJoin] = useState<boolean>(false)
-    const socketRef = React.useRef<WebSocket | null>(null)
-
-    const { playerName, playerId } = useGameStore()
-
+    const { gridInteract, playerState, setPlayerState, onPlayerMove, isConnect } = useCaroGame()
 
     const onHoverHandler = (e: React.MouseEvent<HTMLDivElement>) => {
         const target = e.target as HTMLDivElement
@@ -34,7 +25,6 @@ export default function Caro() {
         if (target.innerHTML.length === 0) {
             target.appendChild(appendChild)
         }
-
 
     }
 
@@ -56,14 +46,7 @@ export default function Caro() {
         }
         if (target.hasAttribute('x-official')) return
         // after check
-        socketRef.current!.send(JSON.stringify({
-            gameID: GameId,
-            type: 'move',
-            Data: {
-                player: playerState,
-                coordinate: target.id
-            }
-        }))
+        onPlayerMove(target.id)
         const appendChild = document.createElement('div')
         appendChild.style.width = '44px'
         appendChild.style.aspectRatio = '1/1'
@@ -76,38 +59,6 @@ export default function Caro() {
 
 
 
-    useEffect(() => {
-
-        socketRef.current = new WebSocket(`ws://localhost:4296/game?gameID=${GameId}`)
-
-
-        socketRef.current.onmessage = (e) => {
-            const data = JSON.parse(e.data)
-            if (!isJoin && data.Status === 'Waiting for Player') {
-                socketRef.current!.send(JSON.stringify({
-                    gameID: GameId,
-                    type: 'join',
-                    Data: {
-                        name: playerName,
-                        playerID: playerId,
-                    }
-                }))
-
-                setIsJoin(true)
-            }
-            console.log('get message', data)
-            if (data.Status === 'Game Start' && gridInteract.length === 0) {
-                setGridInteract(data.Grid)
-            }
-
-        }
-
-        // return () => {
-        //     socketRef.current!.close()
-        // }
-    },[isJoin])
-
-
     if (gridInteract.length === 0) {
         return (
             <>game init</>
@@ -116,7 +67,14 @@ export default function Caro() {
 
     return (
 
-        <div className='w-auto h-auto'>
+        <div className='w-auto h-auto relative'>
+            {
+                gridInteract.length > 0 && !isConnect && (
+                    <div className="w-full h-full bg-[#1E1E1E2d] backdrop-blur-sm absolute top-0 left-0 z-[99] flex justify-center items-center">
+                        <HashLoader color='#EE6677' size={50} />
+                    </div>
+                )
+            }
             <div className="flex justify-start items-center relative cursor-none" id='grid'>
                 {
                     Array.from({ length: HR }, (_, i) => (
@@ -148,8 +106,6 @@ export default function Caro() {
                     }
                 </div>
             </div>
-
-
         </div>
     )
 }

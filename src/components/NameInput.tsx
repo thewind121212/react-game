@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { animated, useSpring } from '@react-spring/web'
+import { useNavigate } from 'react-router';
+import { axiosClient } from '../utils/axiosClient';
 import { IoClose } from "react-icons/io5";
 import Button from '../share-components/button';
 import { useGameStore, generateRandomString } from '../store/game';
@@ -8,8 +10,9 @@ import { useGameStore, generateRandomString } from '../store/game';
 
 export default function NameInput() {
     const [showModal, setShowModal] = useState<boolean>(false)
-    const [name, setName] = useState<string>('')
-    const { setPlayerName, setPlayerId } = useGameStore()
+    const { setPlayerName, setPlayerId, playerName, playerId } = useGameStore()
+    const [name, setName] = useState<string>(playerName)
+    const navigate = useNavigate()
 
 
     const onClickEventHandler = () => {
@@ -28,9 +31,16 @@ export default function NameInput() {
     })
 
 
-    const submitName = () => {
+    const submitName = async () => {
+        const { data } = await axiosClient.get('/create-room')
+        const { roomId } = data
+
+        navigate(`/caro/${roomId}`)
+
         setPlayerName(name)
-        setPlayerId(generateRandomString(10))
+        if (playerId === '') {
+            setPlayerId(generateRandomString(10))
+        }
         setShowModal(false)
     }
 
@@ -71,7 +81,11 @@ export default function NameInput() {
                     </div>
                 </animated.div>
             }
-            <Button onClickEventHandler={onClickEventHandler} content='Create Room' />
+            <div className="flex flex-col items-center justify-center ">
+                <h1 className='text-5xl text-white font-semibold mb-6'>Welcome to Caro Game!</h1>
+                <p className='text-xl mb-10 text-slate-400'>Challenge your friends and have fun. Create your room to start!</p>
+                <Button onClickEventHandler={onClickEventHandler} content='Create Room' />
+            </div>
         </>
     )
 }

@@ -1,5 +1,6 @@
 
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 interface GameState {
     playerName: string
@@ -15,12 +16,22 @@ interface GameAction {
 
 
 
-export const useGameStore = create<GameState & GameAction>((set) => ({
-    playerName: '',
-    playerId: '',
-    setPlayerName: (playerName) => set({ playerName }),
-    setPlayerId: (playerId) => set({ playerId })
-}))
+export const useGameStore = create<GameState & GameAction>()(
+    persist(
+        (set) => ({
+            playerName: '',
+            playerId: '',
+            setPlayerName: (playerName) => set({ playerName }),
+            setPlayerId: (playerId) => set({ playerId }),
+            resetPlayer: () => set({ playerName: '', playerId: '' }),
+        }),
+        {
+            name: 'game-storage',
+            storage: createJSONStorage(() => localStorage),
+            version: 1,
+        }
+    )
+);
 
 
 
