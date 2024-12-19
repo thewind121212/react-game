@@ -6,7 +6,7 @@ import { createRoot } from 'react-dom/client'
 import { WebSocketProvider } from './wrapper/WebSocketWrapper.tsx'
 import Sidebar from './components/sidebar.tsx'
 
-import { CreateTable, CaroGame } from './App.tsx'
+import { CreateTableView, CaroGame } from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <>
@@ -15,7 +15,7 @@ createRoot(document.getElementById('root')!).render(
         <Sidebar />
         <Routes>
           <Route path="/" element={<Introduction />} />
-          <Route path="/caro" element={<CreateTable />} />
+          <Route path="/caro" element={<CreateTableView />} />
           <Route path="/caro/:roomId" element={<CaroGame />} />
         </Routes>
       </WebSocketProvider>

@@ -8,7 +8,7 @@ export interface WebSocketMessage {
     P2ID: string
     P1Name: string
     P2Name: string
-    PlayerTurn: string
+    PlayerTurn: "P1" | "P2"
     Grid: string[][]
     InteractGrid: string[][]
     IsFinished: boolean

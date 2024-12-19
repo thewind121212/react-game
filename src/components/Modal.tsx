@@ -8,7 +8,7 @@ import { useGameStore, generateRandomString } from '../store/game';
 
 
 
-export default function NameInput() {
+export default function CreateTable() {
     const [showModal, setShowModal] = useState<boolean>(false)
     const { setPlayerName, setPlayerId, playerName, playerId } = useGameStore()
     const [name, setName] = useState<string>(playerName)
@@ -88,4 +88,65 @@ export default function NameInput() {
             </div>
         </>
     )
+}
+
+
+export function CreateName({isShowModal = true} : {isShowModal: boolean}) {
+
+    const [showModal, setShowModal] = useState<boolean>(isShowModal)
+    const { setPlayerName, setPlayerId, playerName, playerId } = useGameStore()
+    const [name, setName] = useState<string>(playerName)
+
+
+
+    const showModalAnimation = useSpring({
+        opacity: showModal ? 1 : 0,
+        from: {
+            opacity: 0,
+        },
+        config: {
+            duration: 200
+        },
+        delay: 100
+    })
+
+    const createUser = async () => {
+        setPlayerName(name)
+        if (playerId === '') {
+            setPlayerId(generateRandomString(10))
+        }
+        setShowModal(false)
+    }
+
+    return (
+
+        <>
+            <animated.div className="flex fixed justify-center items-center w-svw h-svh pl-[80px] z-[999] left-0 top-0" style={showModalAnimation}>
+                <div className="wraper w-full h-full flex justify-center items-center relative">
+                    <div className="absolute w-full h-full bg-[#9898981b] z-10"
+                        onClick={() => setShowModal(false)}
+                    ></div>
+                    <div className="w-full max-w-[482px] h-auto bg-white relative z-20 flex justify-center items-center flex-col rounded-[3px] overflow-hidden">
+                        <div className="form-header bg-[#0C141D] w-full h-auto p-4 relative flex justify-center items-center">
+                            <h1 className='text-white text-lg font-bold'>Create User</h1>
+                        </div>
+                        <div className="w-full h-auto bg-[#101C26] flex justify-center items-center py-6">
+                            <form className='flex flex-col gap-4'>
+                                <div className="flex flex-col gap-2">
+                                    <input type="text" placeholder='Nick Name' className='p-4 bg-[#1B2838] text-white border-transparent text-3xl text-center  rounded-md outline-none' id='name'
+                                        onChange={(e) => setName(e.target.value)}
+                                        value={name}
+                                    />
+                                </div>
+                            </form>
+                        </div>
+                        <div className="form-header bg-[#0C141D] w-full h-auto p-4 relative flex justify-end">
+                            <Button onClickEventHandler={createUser} className='bg-[#18BC9C] w-fit' content='Create User' />
+                        </div>
+                    </div>
+                </div>
+            </animated.div>
+        </>
+    )
+
 }

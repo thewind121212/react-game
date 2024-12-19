@@ -2,15 +2,15 @@ import React, { useEffect } from 'react'
 import Caro from './components/Caro'
 import { BarLoader } from 'react-spinners'
 import { axiosClient } from './utils/axiosClient'
-import NameInput from './components/NameInput'
+import CreateTableModal , { CreateName } from './components/Modal'
 import { useGameStore } from './store/game'
 import { useNavigate, useParams } from 'react-router-dom'
 
 
-export function CreateTable() {
+export function CreateTableView() {
   return (
     <div className='w-svw h-svh pl-[80px] flex justify-center items-center bg-[#212F40]'>
-      <NameInput />
+      <CreateTableModal />
     </div>
   )
 }
@@ -26,11 +26,6 @@ export function CaroGame() {
 
 
   useEffect(() => {
-
-    if (playerId === '' || roomId === '') {
-      navigate('/caro')
-    }
-
     const checkRoomExist = async () => {
       try {
         const { data } = await axiosClient.get(`/check-room?roomId=${roomId}`)
@@ -45,29 +40,27 @@ export function CaroGame() {
       }
     }
 
-    checkRoomExist()
+    if (playerId !== '' && roomId !== '') {
+      checkRoomExist()
+    }
+
+
   }, [navigate, roomId, playerId])
 
 
 
   if (loading) {
     return (
-      <div className='w-svw h-svh pl-[80px] flex justify-center items-center bg-[#212F40]'>
+      <div className='w-svw h-svh pl-[80px] flex justify-center items-center bg-[#212F40] relative'>
         <BarLoader color='#fff' width={100} />
+        <CreateName isShowModal={true} />
       </div>
     )
   }
 
   return (
     <div className='w-svw h-svh pl-[80px] flex justify-center items-center bg-[#212F40]'>
-      {
-        playerId === '' &&
-        <NameInput />
-      }
-      {
-        playerId !== '' &&
-        <Caro />
-      }
+      <Caro />
     </div>
   )
 }

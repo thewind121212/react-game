@@ -5,10 +5,26 @@ import { useParams } from "react-router"
 
 
 export function useCaroGame() {
-    const [playerState, setPlayerState] = useState<string>('p1')
     const [gridInteract, setGridInteract] = useState<string[][]>([])
+    const [renderGrid, setRenderGrid] = useState<string[][]>([])
     const [isJoin, setIsJoin] = useState<boolean>(false)
     const { playerName, playerId } = useGameStore()
+
+    const [gameInfo, setGameInfo] = useState<
+        {
+            yourRole: "P1" | "P2"
+            P1Name: string
+            P2Name: string
+            IsFinished: boolean
+            currentTurn: "P1" | "P2"
+        }
+    >({
+        yourRole: 'P1',
+        P1Name: '',
+        P2Name: '',
+        IsFinished: false,
+        currentTurn: 'P1'
+    })
 
 
 
@@ -19,7 +35,6 @@ export function useCaroGame() {
     useEffect(() => {
         if (isConnect) {
             if (!isJoin && lastMessage && lastMessage.Status === 'Waiting for Player') {
-                console.log('run')
                 sendMessage({
                     gameID: roomId,
                     type: 'join',
@@ -31,14 +46,27 @@ export function useCaroGame() {
                 setIsJoin(true)
             }
 
-            if (lastMessage && lastMessage.Status === 'Game Start' && gridInteract.length === 0) {
-                setGridInteract(lastMessage.Grid)
+            if (lastMessage?.P1Name && lastMessage?.P2Name) {
+                setGameInfo({
+                    yourRole: playerId === lastMessage.P1ID ? 'P1' : 'P2',
+                    P1Name: lastMessage.P1Name,
+                    P2Name: lastMessage.P2Name,
+                    IsFinished: lastMessage.IsFinished,
+                    currentTurn: lastMessage.PlayerTurn
+                })
+                setGridInteract(lastMessage.InteractGrid)
+            }
+
+            if (lastMessage && lastMessage.Status === 'Game Start' && renderGrid.length === 0) {
+                setRenderGrid(lastMessage.Grid)
             }
 
 
         }
 
-    }, [gridInteract.length, isConnect, isJoin, lastMessage, playerId, playerName, roomId, sendMessage])
+    }, [renderGrid.length, isConnect, isJoin, lastMessage, playerId, playerName, roomId, sendMessage])
+
+
 
 
 
@@ -47,15 +75,13 @@ export function useCaroGame() {
             gameID: roomId,
             type: 'move',
             Data: {
-                player: playerState,
                 coordinate
             }
         })
     }
 
     const resetToDefault = () => {
-        setGridInteract([])
-        setPlayerState('p1')
+        setRenderGrid([])
         setIsJoin(false)
     }
 
@@ -70,7 +96,7 @@ export function useCaroGame() {
         }
     }, [])
 
+    const isYourTurn = gameInfo.yourRole === gameInfo.currentTurn
 
-
-    return { gridInteract, playerState, isJoin, setGridInteract, setPlayerState, setIsJoin, playerName, playerId, onPlayerMove, resetToDefault, isConnect }
+    return { renderGrid, isJoin, setRenderGrid, setIsJoin, playerName, playerId, onPlayerMove, resetToDefault, isConnect, gameInfo, isYourTurn, gridInteract }
 }
