@@ -8,10 +8,12 @@ export interface WebSocketMessage {
     P2ID: string
     P1Name: string
     P2Name: string
+    PlayerID: string
     PlayerTurn: "P1" | "P2"
     Grid: string[][]
     InteractGrid: string[][]
     IsFinished: boolean
+    WinnerID: string,
     Winner: string
 }
 
@@ -19,7 +21,7 @@ export interface WebSocketMessage {
 export interface WebSocketWrapperProps {
     sendMessage: (message: unknown) => void
     connect: (url: string) => void,
-    disconnect: () => void,
+    disconnect: (roomId: string, playerID: string) => void,
     lastMessage: WebSocketMessage | null,
     isConnect: boolean
 }
@@ -86,8 +88,17 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ reconnectI
         }
     };
 
-    const disconnect = () => {
+    const disconnect = (roomId: string, playerId: string) => {
         if (ws.current) {
+            sendMessage({
+                type: 'disconnect', data: {
+                    gameID: roomId,
+                    type: 'leave',
+                    Data: {
+                        playerID: playerId
+                    }
+                }
+            });
             ws.current.close();
         }
     }

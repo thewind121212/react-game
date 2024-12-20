@@ -35,7 +35,7 @@ const PlayerCard = ({ playerName, isTurn, position }: PlayerCardProps) => {
                 )
             }
             <div
-                className={`w-14 h-14 overflow-hidden flex justify-center items-center rounded-full border-4 ${isTurn ? "border-green-500" : "border-gray-400"
+                className={`w-14 h-14 overflow-hidden flex justify-center items-center rounded-full border-4 ${isTurn ? "border-green-500 animate-pulse " : "border-gray-400" 
                     }`}
                 dangerouslySetInnerHTML={{ __html: avatarSvg }}
             >
