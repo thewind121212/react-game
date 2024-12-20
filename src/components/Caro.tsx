@@ -32,9 +32,6 @@ export default function Caro() {
     }
 
 
-    console.log(gameInfo)
-
-
 
 
     const onMouseOutHandler = () => {

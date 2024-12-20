@@ -42,13 +42,14 @@ export function useCaroGame() {
         if (isConnect) {
 
             if (lastMessage && lastMessage.Status === 'Player left the game' && lastMessage.PlayerID === playerId) {
-                console.log('hit')
+                console.log('hit left game')
                 navigate('/caro')
                 disconnect(roomId || 'null', playerId)
                 return
             }
 
             if (!isJoin && lastMessage && lastMessage.Status === 'Waiting for Player') {
+                console.log('hit join game')
                 sendMessage({
                     gameID: roomId,
                     type: 'join',
@@ -62,6 +63,7 @@ export function useCaroGame() {
             }
 
             if (!isJoin && lastMessage && lastMessage.Status === 'One Player Left') {
+                console.log('hit rejoin game')
                 sendMessage({
                     gameID: roomId,
                     type: 'join',
@@ -75,8 +77,15 @@ export function useCaroGame() {
             }
 
             if (isJoin && lastMessage && lastMessage.Status === 'One Player Left') {
+                console.log('hit op left game')
                 setRenderGrid([])
                 setGridInteract([])
+                setGameInfo({
+                    ...gameInfo,
+                    IsFinished: false,
+                    winnerId: '',
+                    whoWinner: '',
+                })
                 return
             }
 
@@ -133,6 +142,12 @@ export function useCaroGame() {
     const resetToDefault = () => {
         setRenderGrid([])
         setIsJoin(false)
+        setGameInfo({
+            ...gameInfo,
+            IsFinished: false,
+            winnerId: '',
+            whoWinner: '',
+        })
     }
 
     const rematchHandler = () => {
