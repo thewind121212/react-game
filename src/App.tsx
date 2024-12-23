@@ -2,15 +2,21 @@ import React, { useEffect } from 'react'
 import Caro from './components/Caro'
 import { BarLoader } from 'react-spinners'
 import { axiosClient } from './utils/axiosClient'
-import CreateTableModal , { CreateName } from './components/Modal'
+import CreateTableModal, { CreateName, JoinTable } from './components/Modal'
 import { useGameStore } from './store/game'
 import { useNavigate, useParams } from 'react-router-dom'
 
 
 export function CreateTableView() {
   return (
-    <div className='w-svw h-svh pl-[80px] flex justify-center items-center bg-[#212F40]'>
-      <CreateTableModal />
+    <div className='w-svw h-svh pl-[80px] flex justify-center flex-col items-center bg-[#212F40]'>
+
+      <h1 className='text-5xl text-white font-semibold mb-6'>Welcome to Caro Game!</h1>
+      <p className='text-xl mb-10 text-slate-400'>Challenge your friends and have fun. Create your room to start!</p>
+      <div className="flex justify-center items-center gap-4">
+        <JoinTable isShowModal={false} />
+        <CreateTableModal />
+      </div>
     </div>
   )
 }
