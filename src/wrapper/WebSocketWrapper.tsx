@@ -91,8 +91,8 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ reconnectI
     const disconnect = (roomId: string, playerId: string) => {
         if (ws.current) {
             sendMessage({
+                gameID: roomId,
                 type: 'disconnect', data: {
-                    gameID: roomId,
                     type: 'leave',
                     Data: {
                         playerID: playerId

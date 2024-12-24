@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FormEvent, useState } from 'react'
 import { animated, useSpring } from '@react-spring/web'
 import { useNavigate } from 'react-router';
 import { axiosClient } from '../utils/axiosClient';
@@ -31,7 +31,8 @@ export default function CreateTable() {
     })
 
 
-    const submitName = async () => {
+    const submitName = async (e?: FormEvent<HTMLFormElement>) => {
+        e?.preventDefault()
         const { data } = await axiosClient.get('/create-room')
         const { roomId } = data
 
@@ -61,7 +62,7 @@ export default function CreateTable() {
                                 <IoClose className='absolute top-1/2 -translate-y-1/2 right-2 text-white cursor-pointer' size={28} onClick={() => setShowModal(false)} />
                             </div>
                             <div className="w-full h-auto bg-[#101C26] flex justify-center items-center py-6">
-                                <form className='flex flex-col gap-4'>
+                                <form className='flex flex-col gap-4' onSubmit={submitName} >
                                     <div className="flex flex-col gap-2">
                                         <input type="text" placeholder='Nick Name' className='p-4 bg-[#1B2838] text-white border-transparent text-3xl text-center  rounded-md outline-none' id='name'
                                             onChange={(e) => setName(e.target.value)}
@@ -108,7 +109,8 @@ export function CreateName({ isShowModal = true }: { isShowModal: boolean }) {
         delay: 100
     })
 
-    const createUser = async () => {
+    const createUser = async (e?: FormEvent<HTMLFormElement>) => {
+        e?.preventDefault()
         setPlayerName(name)
         if (playerId === '') {
             setPlayerId(generateRandomString(10))
@@ -129,7 +131,7 @@ export function CreateName({ isShowModal = true }: { isShowModal: boolean }) {
                             <h1 className='text-white text-lg font-bold'>Create User</h1>
                         </div>
                         <div className="w-full h-auto bg-[#101C26] flex justify-center items-center py-6">
-                            <form className='flex flex-col gap-4'>
+                            <form className='flex flex-col gap-4' onSubmit={createUser}>
                                 <div className="flex flex-col gap-2">
                                     <input type="text" placeholder='Nick Name' className='p-4 bg-[#1B2838] text-white border-transparent text-3xl text-center  rounded-md outline-none' id='name'
                                         onChange={(e) => setName(e.target.value)}
@@ -168,7 +170,8 @@ export function JoinTable({ isShowModal = true }: { isShowModal: boolean }) {
         delay: 100
     })
 
-    const joinGame = async () => {
+    const joinGame = async (e?: FormEvent<HTMLFormElement>) => {
+        e?.preventDefault()
         if (roomInput === '') {
             setShowModal(false)
             return
@@ -192,7 +195,7 @@ export function JoinTable({ isShowModal = true }: { isShowModal: boolean }) {
                                     <IoClose className='absolute top-1/2 -translate-y-1/2 right-2 text-white cursor-pointer' size={28} onClick={() => setShowModal(false)} />
                                 </div>
                                 <div className="w-full h-auto bg-[#101C26] flex justify-center items-center py-6">
-                                    <form className='flex flex-col gap-4'>
+                                    <form className='flex flex-col gap-4' onSubmit={joinGame}>
                                         <div className="flex flex-col gap-2">
                                             <input type="text" placeholder='Enter Room Id' className='p-4 bg-[#1B2838] text-white border-transparent text-3xl text-center  rounded-md outline-none' id='name'
                                                 onChange={(e) => setRoomInput(e.target.value)}
