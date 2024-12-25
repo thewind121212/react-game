@@ -7,7 +7,10 @@ import { useNavigate, useParams } from "react-router"
 export function useCaroGame() {
     const [gridInteract, setGridInteract] = useState<string[][]>([])
     const [renderGrid, setRenderGrid] = useState<string[][]>([])
+    const [manualLeave, setManualLeave] = useState<boolean>(false)
     const [isJoin, setIsJoin] = useState<boolean>(false)
+    const [isWaitDisconnect, setIsWaitDisconnect] = useState<boolean>(false)
+    const [isOnePlayerDisconnect, setIsOnePlayerDisconnect] = useState<boolean>(false)
     const { playerName, playerId } = useGameStore()
     const navigate = useNavigate()
 
@@ -41,12 +44,34 @@ export function useCaroGame() {
     useEffect(() => {
         if (isConnect) {
 
-            if (lastMessage && lastMessage.Status === 'Player left the game' && lastMessage.PlayerID === playerId) {
-                console.log('hit left game')
+            if (lastMessage && lastMessage.Status === 'Room Disconnected') {
                 navigate('/caro')
-                disconnect(roomId || 'null', playerId)
                 return
             }
+
+            if (!isJoin && lastMessage && lastMessage.Status === 'Game Start') {
+                sendMessage({
+                    gameID: roomId,
+                    type: 'ping',
+                })
+                setIsJoin(true)
+            }
+
+
+            if (isJoin && lastMessage && lastMessage.Status === 'One Player Disconnected') {
+                setIsOnePlayerDisconnect(true)
+            } else {
+                setIsOnePlayerDisconnect(false)
+                setIsWaitDisconnect(false)
+            }
+
+            if (lastMessage && lastMessage.Status === 'Player left the game' && lastMessage.PlayerID === playerId) {
+                navigate('/caro')
+                disconnect()
+                return
+            }
+
+
 
             if (!isJoin && lastMessage && lastMessage.Status === 'Waiting for Player') {
                 console.log('hit join game')
@@ -73,7 +98,7 @@ export function useCaroGame() {
                     }
                 })
                 setIsJoin(true)
-                return 
+                return
             }
 
             if (isJoin && lastMessage && lastMessage.Status === 'One Player Left') {
@@ -116,6 +141,7 @@ export function useCaroGame() {
 
 
     const leaveGameHander = () => {
+        setManualLeave(true)
         sendMessage({
             gameID: roomId,
             type: 'leave',
@@ -157,18 +183,31 @@ export function useCaroGame() {
         })
     }
 
+    const waitDisconnectHandler = () => {
+        setIsWaitDisconnect(true)
+        sendMessage({
+            gameID: roomId,
+            type: 'wait-disconnect',
+            Data: {
+                playerID: playerId
+            }
+        })
+    }
 
+
+    console.log(manualLeave)
 
     useEffect(() => {
         connect(`ws://10.10.0.216:4296/game?gameID=${roomId}`)
 
+
         return () => {
-            disconnect(roomId || 'null', playerId)
+            disconnect()
             resetToDefault()
         }
     }, [])
 
     const isYourTurn = gameInfo.yourRole === gameInfo.currentTurn
 
-    return { renderGrid, isJoin, setRenderGrid, setIsJoin, playerName, playerId, onPlayerMove, resetToDefault, isConnect, gameInfo, isYourTurn, gridInteract, leaveGameHander, rematchHandler }
+    return { renderGrid, isJoin, setRenderGrid, setIsJoin, playerName, playerId, onPlayerMove, resetToDefault, isConnect, gameInfo, isYourTurn, gridInteract, leaveGameHander, rematchHandler, isWaitDisconnect, waitDisconnectHandler, isOnePlayerDisconnect }
 }

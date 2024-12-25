@@ -21,7 +21,7 @@ export interface WebSocketMessage {
 export interface WebSocketWrapperProps {
     sendMessage: (message: unknown) => void
     connect: (url: string) => void,
-    disconnect: (roomId: string, playerID: string) => void,
+    disconnect: () => void,
     lastMessage: WebSocketMessage | null,
     isConnect: boolean
 }
@@ -88,17 +88,8 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({ reconnectI
         }
     };
 
-    const disconnect = (roomId: string, playerId: string) => {
+    const disconnect = () => {
         if (ws.current) {
-            sendMessage({
-                gameID: roomId,
-                type: 'disconnect', data: {
-                    type: 'leave',
-                    Data: {
-                        playerID: playerId
-                    }
-                }
-            });
             ws.current.close();
         }
     }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useCaroGame } from '../hooks/useCaroGame'
-import { HashLoader } from 'react-spinners'
+import { HashLoader, BeatLoader } from 'react-spinners'
 import Button from './Button'
 import PlayerCard from './PlayerCard'
 import { SvgIconCry, SvgIconSmile } from './SVG'
@@ -12,7 +12,7 @@ const VR = 16
 
 
 export default function Caro() {
-    const { renderGrid, onPlayerMove, isConnect, gameInfo, isYourTurn, playerName, gridInteract, leaveGameHander, rematchHandler } = useCaroGame()
+    const { renderGrid, onPlayerMove, isConnect, gameInfo, isYourTurn, playerName, gridInteract, leaveGameHander, rematchHandler, isWaitDisconnect, waitDisconnectHandler, isOnePlayerDisconnect } = useCaroGame()
 
     const onHoverHandler = (e: React.MouseEvent<HTMLDivElement>) => {
         const target = e.target as HTMLDivElement
@@ -99,14 +99,49 @@ export default function Caro() {
                                 </div>
                                 <h1 className='text-xl text-white font-light'>{gameInfo.whoWinner === 'P1' ? gameInfo.P1Name : gameInfo.P2Name} Win</h1>
                             </div>
-                            <div className="w-full h-auto flex justify-between items-center px-12 mt-3">
-                            <Button content='Leave' onClick={() => leaveGameHander()} className='mt-4' />
-                            <Button content='Rematch' onClick={() => rematchHandler()} className='mt-4  bg-green-400 text-slate-600'   />
+                            <div className="w-full h-auto flex justify-between items-center px-12">
+                                <Button content='Leave' onClick={() => leaveGameHander()} className='mt-4 font-bold' />
+                                <Button content='Rematch' onClick={() => rematchHandler()} className='mt-4  !bg-green-400 text-black font-bold' />
                             </div>
                         </div>
                     </div>
                 )
             }
+
+            {
+                isOnePlayerDisconnect && (
+                    <div className="w-full h-full bg-[#1E1E1E2d] backdrop-blur-sm absolute top-0 left-0 flex justify-center items-center z-40">
+                        <div className="w-[400px] h-[200px] bg-slate-600 rounded-xl flex justify-center items-center flex-col gap-2">
+                            {
+
+                                isWaitDisconnect ? (
+                                    <>
+                                        <h1 className='text-xl text-white font-light'>
+                                            Waiting For {gameInfo.yourRole === 'P1' ? gameInfo.P2Name : gameInfo.P1Name} Reconnect
+                                        </h1>
+                                        <BeatLoader color='#EE6677' size={12} speedMultiplier={0.5} />
+                                    </>
+                                ) : (
+                                    <>
+                                        <h1 className='text-3xl text-white font-bold'>
+                                            One Player Disconneted
+                                        </h1>
+                                        <p className="w-full h-auto flex justify-center items-center gap-4 text-center px-4 text-slate-300">
+                                            Room will be remove in 20s
+                                        </p>
+                                        <div className="w-full h-auto flex justify-between items-center px-12">
+                                            <Button content='Leave' onClick={() => { }} className='mt-4 font-bold' />
+                                            <Button content='Wait' onClick={waitDisconnectHandler} className='mt-4  !bg-green-400 text-black font-bold' />
+                                        </div>
+                                    </>
+                                )
+                            }
+                        </div>
+                    </div>
+
+                )
+            }
+
 
             {
                 renderGrid.length > 0 && !isConnect && (
