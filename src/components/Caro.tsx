@@ -74,7 +74,7 @@ export default function Caro() {
 
         <div className='w-screen h-screen relative flex justify-center items-center'>
             <div className="w-auto h-auto absolute right-4 top-6">
-                <Button content='Leave Room' onClick={() => leaveGameHander()} />
+                <Button content='Leave Room' onClick={() => leaveGameHander(true)} />
             </div>
             <div className="w-[640px] absolute left-[50%] bg-slate-600 h-20 -translate-x-1/2 top-6 rounded-xl">
                 <div className="w-full h-auto relative">
@@ -100,7 +100,7 @@ export default function Caro() {
                                 <h1 className='text-xl text-white font-light'>{gameInfo.whoWinner === 'P1' ? gameInfo.P1Name : gameInfo.P2Name} Win</h1>
                             </div>
                             <div className="w-full h-auto flex justify-between items-center px-12">
-                                <Button content='Leave' onClick={() => leaveGameHander()} className='mt-4 font-bold' />
+                                <Button content='Leave' onClick={() => leaveGameHander(true)} className='mt-4 font-bold' />
                                 <Button content='Rematch' onClick={() => rematchHandler()} className='mt-4  !bg-green-400 text-black font-bold' />
                             </div>
                         </div>
@@ -120,6 +120,7 @@ export default function Caro() {
                                             Waiting For {gameInfo.yourRole === 'P1' ? gameInfo.P2Name : gameInfo.P1Name} Reconnect
                                         </h1>
                                         <BeatLoader color='#EE6677' size={12} speedMultiplier={0.5} />
+                                        <Button content='Leave' onClick={() => leaveGameHander()} className='mt-4 font-bold' />
                                     </>
                                 ) : (
                                     <>
@@ -130,7 +131,7 @@ export default function Caro() {
                                             Room will be remove in 20s
                                         </p>
                                         <div className="w-full h-auto flex justify-between items-center px-12">
-                                            <Button content='Leave' onClick={() => { }} className='mt-4 font-bold' />
+                                            <Button content='Leave' onClick={() => leaveGameHander()} className='mt-4 font-bold' />
                                             <Button content='Wait' onClick={waitDisconnectHandler} className='mt-4  !bg-green-400 text-black font-bold' />
                                         </div>
                                     </>

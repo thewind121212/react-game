@@ -7,7 +7,6 @@ import { useNavigate, useParams } from "react-router"
 export function useCaroGame() {
     const [gridInteract, setGridInteract] = useState<string[][]>([])
     const [renderGrid, setRenderGrid] = useState<string[][]>([])
-    const [manualLeave, setManualLeave] = useState<boolean>(false)
     const [isJoin, setIsJoin] = useState<boolean>(false)
     const [isWaitDisconnect, setIsWaitDisconnect] = useState<boolean>(false)
     const [isOnePlayerDisconnect, setIsOnePlayerDisconnect] = useState<boolean>(false)
@@ -140,8 +139,8 @@ export function useCaroGame() {
     }, [renderGrid.length, isConnect, lastMessage, playerId, playerName, roomId, sendMessage, disconnect, navigate])
 
 
-    const leaveGameHander = () => {
-        setManualLeave(true)
+    const leaveGameHander = (isDispatchFn  : boolean = false) => {
+        if (isDispatchFn) {
         sendMessage({
             gameID: roomId,
             type: 'leave',
@@ -149,8 +148,10 @@ export function useCaroGame() {
                 playerID: playerId
             }
         })
+        }else {
+            navigate('/caro')
+        }
     }
-
 
 
 
@@ -195,7 +196,6 @@ export function useCaroGame() {
     }
 
 
-    console.log(manualLeave)
 
     useEffect(() => {
         connect(`ws://10.10.0.216:4296/game?gameID=${roomId}`)
