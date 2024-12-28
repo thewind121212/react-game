@@ -17,8 +17,11 @@ export default function Sidebar() {
           <img src="/src/assets/gomoku.png" className='w-full h-full' alt="game" />
         </div>
       </Link>
-
-
+      <Link to="/flappybird" className="game-list flex justify-center items-center flex-col mt-8">
+        <div className="w-[60px] h-[60px] bg-white overflow-hidden rounded-md cursor-pointer">
+          <img src="/src/assets/bird.png" className='w-full h-full' alt="game" />
+        </div>
+      </Link>
     </div>
   )
 }

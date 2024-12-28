@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+#flappybird-board {
+    background-image: url('assets/flappybirdbg.png');
+}
