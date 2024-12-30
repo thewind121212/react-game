@@ -70,10 +70,7 @@ export default function FlappyBird() {
       isCollide = true;
     }
 
-    pipeArray.current.forEach((pipe, index) => {
-      if (pipe.xtopPipe + PIPEWIDTH < -360) {
-        pipeArray.current.splice(index, 1); // Remove off-screen pipes
-      }
+    pipeArray.current.forEach((pipe,) => {
 
       const Xb = birdRef.current.x;
       const Yb = birdRef.current.y;
@@ -117,12 +114,16 @@ export default function FlappyBird() {
       context.current.clearRect(0, 0, 360, 640);
 
       // Draw pipes
-      pipeArray.current.forEach((pipe) => {
+      pipeArray.current.forEach((pipe, index) => {
         pipe.xtopPipe -= 1;
         pipe.xbottomPipe -= 1;
         if (context.current) {
           context.current.drawImage(pipeImgTop, pipe.xtopPipe, pipe.ytopPipe, PIPEWIDTH, INITPIPEHEIGHT);
           context.current.drawImage(pipeImgBottom, pipe.xbottomPipe, pipe.ybottomPipe, PIPEWIDTH, INITPIPEHEIGHT);
+        }
+
+        if (pipe.xtopPipe + PIPEWIDTH < -360) {
+          pipeArray.current.splice(index, 1);
         }
       });
 
