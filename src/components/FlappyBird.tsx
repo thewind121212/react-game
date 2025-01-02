@@ -15,7 +15,7 @@ export default function FlappyBird() {
           id="flappybird-board"
         ></canvas>
         <div className="w-full h-auto absolute bottom-0 left-0 z-20 pointer-events-none">
-          <img src="/src/assets/bottom-background.png" alt="background-bt" className="w-full h-auto pointer-events-none" />
+          <img src="/bottom-background.png" alt="background-bt" className="w-full h-auto pointer-events-none" />
         </div>
       </div>
     </div>

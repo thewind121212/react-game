@@ -282,29 +282,29 @@ export const useFlappyBirdGame = ({ canvasId, mode = "offline" }: { canvasId: st
             // Load images for bird and pipes
             for (let i = 0; i < 3; i++) {
                 birdImgFrame[i] = new Image();
-                birdImgFrame[i].src = `/src/assets/flappybird/birdFrame${i + 1}.png`;
+                birdImgFrame[i].src = `/flappybird/birdFrame${i + 1}.png`;
             }
             // Load Image for game start
             gameStartImg = new Image();
-            gameStartImg.src = '/src/assets/flappybird/start.png';
+            gameStartImg.src = '/flappybird/start.png';
 
 
             //loading the tab frame
             for (let i = 0; i < 2; i++) {
                 tabImg[i] = new Image();
-                tabImg[i].src = `/src/assets/flappybird/taps/t${i + 1}.png`;
+                tabImg[i].src = `/flappybird/taps/t${i + 1}.png`;
             }
 
             //load the game over image
             gameOverImg = new Image();
-            gameOverImg.src = '/src/assets/flappybird/go.png';
+            gameOverImg.src = '/flappybird/go.png';
 
 
 
             pipeImgTop = new Image();
-            pipeImgTop.src = '/src/assets/flappybird/top-pipe.png';
+            pipeImgTop.src = '/flappybird/top-pipe.png';
             pipeImgBottom = new Image();
-            pipeImgBottom.src = '/src/assets/flappybird/bottom-pipe.png';
+            pipeImgBottom.src = '/flappybird/bottom-pipe.png';
 
 
             //gen the first pipe pair
