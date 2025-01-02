@@ -8,7 +8,7 @@ export default function FlappyBird() {
   return (
     <div className="w-svw h-svh pl-[80px] flex justify-center items-center bg-[#212F40]">
       <div className="w-[360px] h-[640px] bg-white relative"
-        onClick={() => runGame(gameStatus.current === "start" ? "start game" : "restart game")}
+        onClick={() => runGame(gameStatus.current === "start" ? "start game" : "start")}
       >
         <canvas
           className="w-full h-full absolute top-0 left-0 z-10"
