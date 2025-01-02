@@ -3,7 +3,7 @@ import { animated, useSpring } from '@react-spring/web'
 import { useNavigate } from 'react-router';
 import { axiosClient } from '../utils/axiosClient';
 import { IoClose } from "react-icons/io5";
-import Button from '../share-components/button';
+import Button from '../share-components/Button';
 import { useGameStore, generateRandomString } from '../store/game';
 
 

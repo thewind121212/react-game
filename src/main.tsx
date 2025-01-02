@@ -5,7 +5,7 @@ import FlappyBird from './components/FlappyBird.tsx'
 import './index.css'
 import { createRoot } from 'react-dom/client'
 import { WebSocketProvider } from './wrapper/WebSocketWrapper.tsx'
-import Sidebar from './components/sidebar.tsx'
+import Sidebar from './components/SideBar'
 
 import { CreateTableView, CaroGame } from './App.tsx'
 
