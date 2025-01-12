@@ -5,10 +5,23 @@ import { useFlappyBirdGame } from "../hooks/useFlappyBirdGame";
 export default function FlappyBird() {
   const { runGame, gameStatus } = useFlappyBirdGame({ canvasId: "flappybird-board", mode: "offline" });
 
+
+  const onGameInteraction = () => {
+    if (gameStatus.current === "playing") {
+      return
+    }
+    if (gameStatus.current === "start") {
+      runGame("start game");
+    }
+    if (gameStatus.current === "end") {
+      runGame("start");
+    }
+  }
+
   return (
     <div className="w-svw h-svh pl-[80px] flex justify-center items-center bg-[#212F40]">
       <div className="w-[360px] h-[640px] bg-white relative"
-        onClick={() => runGame(gameStatus.current === "start" ? "start game" : "start")}
+        onClick={onGameInteraction}
       >
         <canvas
           className="w-full h-full absolute top-0 left-0 z-10"
